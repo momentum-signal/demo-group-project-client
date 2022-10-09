@@ -1,10 +1,38 @@
 import Link from "next/link";
 import React from "react";
 import Required from "./required.component";
+import toast from "react-hot-toast";
 
 const Login = ({ setToggle }) => {
+  function handleLogin(event) {
+    event.preventDefault();
+
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    const userInfo = { email, password };
+
+    const postExistingUser = async () => {
+      const request = await fetch(`http://localhost:5000/signin`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify(userInfo),
+      });
+      const response = await request.json();
+      if (response.acknowledgement) {
+        localStorage.setItem("accessToken", response.data.token);
+        return toast.success("user sign in successfully.");
+      }
+    };
+    postExistingUser();
+
+    event.target.reset();
+  }
+
   return (
-    <form>
+    <form onSubmit={handleLogin}>
       <div className="form-control">
         <label className="label">
           <span className="label-text">
@@ -13,6 +41,7 @@ const Login = ({ setToggle }) => {
         </label>
         <input
           type="email"
+          name="email"
           placeholder="Enter your email"
           className="input input-bordered"
           required
@@ -26,6 +55,7 @@ const Login = ({ setToggle }) => {
         </label>
         <input
           type="password"
+          name="password"
           placeholder="Enter your password"
           className="input input-bordered"
           required
@@ -50,7 +80,9 @@ const Login = ({ setToggle }) => {
         </label>
       </div>
       <div className="form-control mt-6">
-        <button className="btn btn-primary">Login</button>
+        <button className="btn btn-primary" type="submit">
+          Login
+        </button>
       </div>
     </form>
   );
