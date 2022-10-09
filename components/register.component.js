@@ -1,10 +1,71 @@
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import Required from "./required.component";
+import toast from "react-hot-toast";
 
 const Register = ({ setToggle }) => {
+  const [avatar, setAvatar] = useState("");
+
+  function handleRegistration(event) {
+    event.preventDefault();
+
+    const firstName = event.target.firstName.value;
+    const lastName = event.target.lastName.value;
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    const confirmPassword = event.target.confirmPassword.value;
+    const contactNumber = event.target.phone.value;
+    const userInfo = {
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      avatar,
+      contactNumber,
+    };
+
+    const postNewUser = async () => {
+      const request = await fetch(`http://localhost:5000/signup`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify(userInfo),
+      });
+      const response = await request.json();
+      if (response.acknowledgement) {
+        return toast.success("user sign up successfully.");
+      }
+    };
+    postNewUser();
+
+    event.target.reset();
+  }
+
+  // post user avatar
+  function handleUserAvatar(event) {
+    const formData = new FormData();
+    formData.append("avatar", event.target.files[0]);
+
+    const postUserAvatar = async () => {
+      const request = await fetch(`http://localhost:5000/avatar/`, {
+        method: "POST",
+        body: formData,
+      });
+      const response = await request.json();
+      console.log(response);
+      setAvatar(response.data);
+      if (response.acknowledgement) {
+        return toast.success("avatar uploaded successfully.");
+      }
+    };
+    postUserAvatar();
+  }
+
   return (
-    <form>
+    <form onSubmit={handleRegistration}>
       <div className="form-control">
         <label className="label">
           <span className="label-text">
@@ -13,12 +74,14 @@ const Register = ({ setToggle }) => {
         </label>
         <input
           type="text"
+          name="firstName"
           placeholder="Enter your first name"
           className="input input-bordered mb-1"
           required
         />
         <input
           type="text"
+          name="lastName"
           placeholder="Enter your last name"
           className="input input-bordered mt-1"
           required
@@ -32,6 +95,7 @@ const Register = ({ setToggle }) => {
         </label>
         <input
           type="email"
+          name="email"
           placeholder="Enter your email"
           className="input input-bordered"
           required
@@ -45,6 +109,7 @@ const Register = ({ setToggle }) => {
         </label>
         <input
           type="password"
+          name="password"
           placeholder="Enter your password"
           className="input input-bordered"
           required
@@ -58,6 +123,7 @@ const Register = ({ setToggle }) => {
         </label>
         <input
           type="password"
+          name="confirmPassword"
           placeholder="Re-Enter your password"
           className="input input-bordered"
           required
@@ -71,6 +137,7 @@ const Register = ({ setToggle }) => {
         </label>
         <input
           type="file"
+          name="avatar"
           className="text-sm text-grey-500
             file:mr-5 file:py-2 file:px-6
             file:rounded-full file:border-0
@@ -81,6 +148,7 @@ const Register = ({ setToggle }) => {
             shadow-sm pb-2 rounded-lg
           "
           required
+          onChange={handleUserAvatar}
         />
       </div>
       <div className="form-control">
@@ -91,6 +159,7 @@ const Register = ({ setToggle }) => {
         </label>
         <input
           type="number"
+          name="phone"
           placeholder="Enter your phone number"
           className="input input-bordered"
           required
@@ -107,7 +176,9 @@ const Register = ({ setToggle }) => {
         </label>
       </div>
       <div className="form-control mt-6">
-        <button className="btn btn-primary">Register</button>
+        <button className="btn btn-primary" type="submit">
+          Register
+        </button>
       </div>
     </form>
   );
