@@ -31,7 +31,7 @@ const Reset = ({ setToggle }) => {
         </label>
       </div>
       <div className="form-control mt-6">
-        <button className="btn btn-primary">Reset</button>
+        <button className="btn btn-primary" type="submit">Reset</button>
       </div>
     </form>
   );
