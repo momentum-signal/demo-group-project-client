@@ -4,10 +4,10 @@ import { useState } from "react";
 import Login from "../components/login.component";
 import Register from "../components/register.component";
 import Reset from "../components/reset.component";
+import { Toaster } from "react-hot-toast";
 
 export default function Home() {
   const [toggle, setToggle] = useState("login");
-  console.log(toggle);
 
   return (
     <section>
@@ -31,7 +31,9 @@ export default function Home() {
                 width={80}
                 height={80}
               />
-              <h3 className="text-2xl font-bold bg-secondary px-4 py-2 rounded shadow">No User</h3>
+              <h3 className="text-2xl font-bold bg-secondary px-4 py-2 rounded shadow">
+                No User
+              </h3>
             </div>
             <div>
               <h1 className="text-5xl font-bold">{toggle} now!</h1>
@@ -61,6 +63,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <Toaster />
     </section>
   );
 }
